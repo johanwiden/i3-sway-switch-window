@@ -59,4 +59,4 @@ Default is swap.
 brotab (bt) can list at least vivaldi tabs. No luck with my google-chrome, does it use a snap container?
 vivaldi --new-window URL
 will open URL in new window.
-bt close will close a tab.
+TODO: bt close will close a tab.

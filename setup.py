@@ -47,6 +47,7 @@ setuptools.setup(
         'console_scripts': [
             'emacs_buffers = i3_switch_window.main:cli_emacs_buffers',
             'emacs_recentf = i3_switch_window.main:cli_emacs_recentf',
+            'browser_tab = i3_switch_window.main:cli_browser_tab',
         ]
     },
 )

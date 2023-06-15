@@ -2,18 +2,35 @@
 
 import sys
 import os.path
+import re
 import stat
 import subprocess
 import tempfile
 
 import i3_switch_window.display_error_message
+import i3_switch_window.browser_tab_list
 import i3_switch_window.emacs_buffer_lists
 import i3_switch_window.emacs_recentf_list
 import i3_switch_window.i3_do_add
 import i3_switch_window.i3_do_switch
 import i3_switch_window.__version__
 
-def _select_item_and_switch(add_or_swap_window, item_list, command_prefix, command_suffix):
+def _select_item_and_switch(add_or_swap_window, item_list,
+                            command_prefix, command_suffix,
+                            match_expr,
+                            substitution_expr):
+    """Call 'rofi' to select an item from 'item_list'. Execute command with selected item.
+
+    The command is supposed to create a new desktop window. Parameters:
+    - add_or_swap_window:
+      - add: The new window is displayed next to currently focused window.
+      - swap: The window is displayed instead of the currently focused window.
+              The currently focused window is moved to a different workspace.
+    - item_list: List of strings, from which rofi shall select one string.
+    - command_prefix, command_suffix: The command to be executed is the concatenation of
+      command_prefix, selected item, command suffix
+    - match_expr, substitution_expr: Regular expressions to clean selected string. Can be the empty string.
+    """
     if len(item_list) > 0:
         success = 1
         with tempfile.TemporaryFile() as temp_fp:
@@ -38,6 +55,8 @@ def _select_item_and_switch(add_or_swap_window, item_list, command_prefix, comma
 
         if success:
             file_selected = list(subprocess_result.stdout.split("\n"))
+            if match_expr != '':
+                file_selected = [re.sub(match_expr, substitution_expr, token) for token in file_selected]
             file_selected = [token for token in file_selected if len(token) > 0 and token[0] != ' ']
             if len(file_selected) == 1:
                 with tempfile.TemporaryDirectory() as temp_dir:
@@ -57,30 +76,59 @@ def _select_item_and_switch(add_or_swap_window, item_list, command_prefix, comma
 def switch_in_emacs_buffer(add_or_swap_window):
     """Get current buffers from emacs (files and internal buffers). Select one, display it in desktop window.
 
-    Use rofi to select buffer. The window is displayed instead of the currently focused window.
-    The currently focused window is moved to a different workspace.
+    Use rofi to select buffer. Display with emacsclient. Parameter 'add_or_swap_window':
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
     """
     [interesting_buffers, file_buffers, internal_buffers] = i3_switch_window.emacs_buffer_lists._emacs_buffer_lists()
     command_prefix = "emacsclient -nc -e '(let ((display-buffer-alist '\\''((\".*\" display-buffer-same-window)))) (pop-to-buffer \""
     command_suffix = "\" nil t))'\n"
-    _select_item_and_switch(add_or_swap_window, interesting_buffers, command_prefix, command_suffix)
+    _select_item_and_switch(add_or_swap_window, interesting_buffers, command_prefix, command_suffix, r'', r'')
 
 def switch_in_emacs_recentf(add_or_swap_window):
     """Get current recentf filepaths from emacs. Select one, display it in desktop window.
 
-    Use rofi to select buffer. The window is displayed instead of the currently focused window.
-    The currently focused window is moved to a different workspace.
+    Use rofi to select file. Display with emacsclient. Parameter 'add_or_swap_window':
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
     """
     recentf_list = i3_switch_window.emacs_recentf_list._emacs_recentf_list()
     command_prefix = "emacsclient -nc "
     command_suffix = "\n"
-    _select_item_and_switch(add_or_swap_window, recentf_list, command_prefix, command_suffix)
+    _select_item_and_switch(add_or_swap_window, recentf_list, command_prefix, command_suffix, r'', r'')
+
+# TODO: Optionally close original tab
+def switch_in_browser_tab(add_or_swap_window):
+    """Get browser tab titles and URLs. Select one, display it in desktop window.
+
+    Use rofi to select URL. Display with web browser. Parameter 'add_or_swap_window':
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
+    """
+    tab_list = i3_switch_window.browser_tab_list._browser_tab_list()
+    command_prefix = "vivaldi --new-window "
+    command_suffix = "\n"
+    _select_item_and_switch(add_or_swap_window, tab_list,
+                            command_prefix, command_suffix,
+                            r'.*h(ttps://\S+)\s*$', r"'h\1'")
 
 def cli_emacs_buffers():
-    """Called from commandline: See section [project.scripts] in pyproject.toml.
+    """Use rofi to select an emacs buffer. Open emacsclient with selected buffer.
+
+    Command line arguments:
+    - --version: Display package version.
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
+
+    Called from command line: See section [project.scripts] in pyproject.toml.
     """
     if '--version' in sys.argv[1:]:
-        print(i3_switch_window.__version__.__version__)
+        print("Python package: ", i3_switch_window.__version__.__title__, " ",
+              i3_switch_window.__version__.__version__)
         exit(0)
     elif 'add' in sys.argv[1:]:
         switch_in_emacs_buffer('add')
@@ -88,12 +136,41 @@ def cli_emacs_buffers():
         switch_in_emacs_buffer('swap')
 
 def cli_emacs_recentf():
-    """Called from commandline: See section [project.scripts] in pyproject.toml.
+    """Use rofi to select path from emacs recentf. Open emacsclient with selected file.
+
+    recentf is emacs list of recently opened files. Command line arguments:
+    - --version: Display package version.
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
+
+    Called from command line: See section [project.scripts] in pyproject.toml.
     """
     if '--version' in sys.argv[1:]:
-        print(i3_switch_window.__version__.__version__)
+        print("Python package: ", i3_switch_window.__version__.__title__, " ",
+              i3_switch_window.__version__.__version__)
         exit(0)
     elif 'add' in sys.argv[1:]:
         switch_in_emacs_recentf('add')
     else:
         switch_in_emacs_recentf('swap')
+
+def cli_browser_tab():
+    """Use rofi to select a URL from list of web browser tabs. Open a browser window with URL.
+
+    Command line arguments:
+    - --version: Display package version.
+    - add: Show the window next to the currently focused window.
+    - swap: The window is displayed instead of the currently focused window.
+            The currently focused window is moved to a different workspace.
+
+    Called from command line: See section [project.scripts] in pyproject.toml.
+    """
+    if '--version' in sys.argv[1:]:
+        print("Python package: ", i3_switch_window.__version__.__title__, " ",
+              i3_switch_window.__version__.__version__)
+        exit(0)
+    elif 'add' in sys.argv[1:]:
+        switch_in_browser_tab('add')
+    else:
+        switch_in_browser_tab('swap')

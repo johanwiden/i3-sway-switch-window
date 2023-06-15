@@ -20,9 +20,6 @@ def _emacs_buffer_lists():
                                             '--eval',"(require 'server)",
                                             '--eval',"(mapc #'princ (read (server-eval-at \"server\" '(prin1-to-string (mapcar (lambda (buffer) (format \"%s\\n\" buffer)) (buffer-list))))))"],
                                            capture_output=True, encoding="utf-8", check=True, timeout=5)
-        # subprocess_result = subprocess.run(['./list-emacs-buffers.sh'], capture_output=True, encoding="utf-8", check=True, timeout=5)
-        # subprocess_result = subprocess.run(['./subprocess-tutorial/timer.py'], stdout=subprocess.PIPE, check=True, timeout=5)
-        # subprocess_result = subprocess.run(['./subprocess-tutorial/timer.py','4'], stdout=subprocess.PIPE, check=True, timeout=2)
     except FileNotFoundError as exc:
         error_message = f"Process failed because the executable could not be found.\n{exc}"
         i3_switch_window.display_error_message._display_error_message(error_message)

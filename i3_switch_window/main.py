@@ -18,6 +18,7 @@ import i3_switch_window.i3_do_switch
 import i3_switch_window.__version__
 
 webbrowser = 'vivaldi' # Default value
+swap_workspace = '2'
 
 def _select_item_and_switch(add_or_swap_window, item_list,
                             command_prefix, command_suffix,
@@ -75,7 +76,7 @@ def _select_item_and_switch(add_or_swap_window, item_list,
                     if add_or_swap_window == 'add':
                         i3_switch_window.i3_do_add._do_add(temp_file_name)
                     else:
-                        i3_switch_window.i3_do_switch._do_switch(temp_file_name)
+                        i3_switch_window.i3_do_switch._do_switch(temp_file_name, swap_workspace)
 
 def switch_in_emacs_buffer(add_or_swap_window):
     """Get current buffers from emacs (files and internal buffers). Select one, display it in desktop window.
@@ -138,11 +139,15 @@ def _parse_command_line_and_read_config():
     if not i3_switch_window.config._read_config_file(config_path):
         exit(1)
     config_webbrowser = i3_switch_window.config._get_value('webbrowser', 'webbrowser')
+    config_swap_workspace = i3_switch_window.config._get_value('workspace', 'swap_workspace')
     global webbrowser
+    global swap_workspace
     if args.browser:
         webbrowser = args.browser
     elif len(config_webbrowser) > 0:
         webbrowser = config_webbrowser
+    if len(config_swap_workspace) > 0:
+        swap_workspace = config_swap_workspace
     return args.action
 
 def cli_emacs_buffers():

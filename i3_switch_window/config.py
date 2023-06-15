@@ -46,3 +46,11 @@ def _read_config_file(config_file_path):
         return False
 
     return len(parser.read(file_path)) > 0
+
+def _get_value(section, key):
+    """Try to get a value from config file. If not found, the empty strin is returned.
+    """
+    if parser.has_option(section, key):
+        return parser[section][key]
+    else:
+        return ''

@@ -17,6 +17,8 @@ import i3_switch_window.i3_do_add
 import i3_switch_window.i3_do_switch
 import i3_switch_window.__version__
 
+webbrowser = 'vivaldi' # Default value
+
 def _select_item_and_switch(add_or_swap_window, item_list,
                             command_prefix, command_suffix,
                             match_expr,
@@ -111,7 +113,7 @@ def switch_in_browser_tab(add_or_swap_window):
             The currently focused window is moved to a different workspace.
     """
     tab_list = i3_switch_window.browser_tab_list._browser_tab_list()
-    command_prefix = "vivaldi --new-window "
+    command_prefix = webbrowser + " --new-window "
     command_suffix = "\n"
     _select_item_and_switch(add_or_swap_window, tab_list,
                             command_prefix, command_suffix,
@@ -123,6 +125,7 @@ def _parse_command_line_and_read_config():
                     description = i3_switch_window.__version__.__description__)
     parser.add_argument('--version', required = False, action="store_true")
     parser.add_argument('--config', required = False, type=str)
+    parser.add_argument('--browser', required = False, type=str)
     parser.add_argument('action', nargs='?', choices = ['add', 'swap'], default = 'swap')
     args = parser.parse_args()
     if args.version:
@@ -134,6 +137,12 @@ def _parse_command_line_and_read_config():
         config_path = args.config
     if not i3_switch_window.config._read_config_file(config_path):
         exit(1)
+    config_webbrowser = i3_switch_window.config._get_value('webbrowser', 'webbrowser')
+    global webbrowser
+    if args.browser:
+        webbrowser = args.browser
+    elif len(config_webbrowser) > 0:
+        webbrowser = config_webbrowser
     return args.action
 
 def cli_emacs_buffers():

@@ -28,7 +28,6 @@ setuptools.setup(
         'Intended Audience :: End Users/Desktop',
         'Natural Language :: English',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',

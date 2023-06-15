@@ -2,11 +2,13 @@
 
 import sys
 import os.path
+import argparse
 import re
 import stat
 import subprocess
 import tempfile
 
+import i3_switch_window.config
 import i3_switch_window.display_error_message
 import i3_switch_window.browser_tab_list
 import i3_switch_window.emacs_buffer_lists
@@ -115,6 +117,25 @@ def switch_in_browser_tab(add_or_swap_window):
                             command_prefix, command_suffix,
                             r'.*h(ttps://\S+)\s*$', r"'h\1'")
 
+def _parse_command_line_and_read_config():
+    parser = argparse.ArgumentParser(
+                    prog = i3_switch_window.__version__.__title__,
+                    description = i3_switch_window.__version__.__description__)
+    parser.add_argument('--version', required = False, action="store_true")
+    parser.add_argument('--config', required = False, type=str)
+    parser.add_argument('action', nargs='?', choices = ['add', 'swap'], default = 'swap')
+    args = parser.parse_args()
+    if args.version:
+        print("Python package: ", i3_switch_window.__version__.__title__, " ",
+              i3_switch_window.__version__.__version__)
+        exit(0)
+    config_path = ''
+    if args.config:
+        config_path = args.config
+    if not i3_switch_window.config._read_config_file(config_path):
+        exit(1)
+    return args.action
+
 def cli_emacs_buffers():
     """Use rofi to select an emacs buffer. Open emacsclient with selected buffer.
 
@@ -126,14 +147,8 @@ def cli_emacs_buffers():
 
     Called from command line: See section [project.scripts] in pyproject.toml.
     """
-    if '--version' in sys.argv[1:]:
-        print("Python package: ", i3_switch_window.__version__.__title__, " ",
-              i3_switch_window.__version__.__version__)
-        exit(0)
-    elif 'add' in sys.argv[1:]:
-        switch_in_emacs_buffer('add')
-    else:
-        switch_in_emacs_buffer('swap')
+    action = _parse_command_line_and_read_config()
+    switch_in_emacs_buffer(action)
 
 def cli_emacs_recentf():
     """Use rofi to select path from emacs recentf. Open emacsclient with selected file.
@@ -146,14 +161,8 @@ def cli_emacs_recentf():
 
     Called from command line: See section [project.scripts] in pyproject.toml.
     """
-    if '--version' in sys.argv[1:]:
-        print("Python package: ", i3_switch_window.__version__.__title__, " ",
-              i3_switch_window.__version__.__version__)
-        exit(0)
-    elif 'add' in sys.argv[1:]:
-        switch_in_emacs_recentf('add')
-    else:
-        switch_in_emacs_recentf('swap')
+    action = _parse_command_line_and_read_config()
+    switch_in_emacs_recentf(action)
 
 def cli_browser_tab():
     """Use rofi to select a URL from list of web browser tabs. Open a browser window with URL.
@@ -166,11 +175,5 @@ def cli_browser_tab():
 
     Called from command line: See section [project.scripts] in pyproject.toml.
     """
-    if '--version' in sys.argv[1:]:
-        print("Python package: ", i3_switch_window.__version__.__title__, " ",
-              i3_switch_window.__version__.__version__)
-        exit(0)
-    elif 'add' in sys.argv[1:]:
-        switch_in_browser_tab('add')
-    else:
-        switch_in_browser_tab('swap')
+    action = _parse_command_line_and_read_config()
+    switch_in_browser_tab(action)

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[project]
+name = "i3_switch_window"
+version = "0.1.0"
+authors = [
+  { name="Johan Widén", email="j.e.widen@gmail.com" },
+]
+description = "In i3wm replace current window with emacs buffer, browser tab or other window"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = ["i3ipc"]
+classifiers = [
+    # complete classifier list:
+    # http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    'Development Status :: 3 - Alpha',
+    'License :: OSI Approved :: MIT License',
+    'Environment :: X11 Applications',
+    'Intended Audience :: End Users/Desktop',
+    'Natural Language :: English',
+    'Operating System :: POSIX',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Unix Shell',
+    'Topic :: Desktop Environment :: Window Managers',
+]
+
+[project.urls]
+"Homepage" = "https://github.com/johanwiden/i3-switch-window"
+"Bug Tracker" = "https://github.com/johanwiden/i3-switch-window/issues"
+[project.scripts]
+emacs_buffers = "i3_switch_window.main:cli_emacs_buffers"
+emacs_recentf = "i3_switch_window.main:cli_emacs_recentf"

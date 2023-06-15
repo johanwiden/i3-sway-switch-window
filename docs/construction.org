@@ -1,0 +1,62 @@
+#+title: Construction
+
+How I intend to construct i3-switch
+
+* Best practices
+For each feature, research how other people have implemented something similar.
+If I find no good examples, then ask GPT.
+Keep references to where I found useful stuff.
+Code that is based on other peoples work, should contain reference to that work.
+
+* Construction
+** Make a working python script as soon as possible
+*** Initially just get emacs buffers.
+Create buffer lists: all emacs buffers, files, internal buffers.
+The lists should be sorted case insensitive.
+*** Replace the current i3 window: Create a new emacsclient window, displaying the buffer.
+The old window should be moved away from the current workspace. Use another workspace or scratch? Another workspace is probably better. Experiment.
+Probably a good idea to launch new window in another workspace, or in scratch, then swap old current window, with newly launched window.
+Alternatively just launch in current workspace, then move old current window to other workspace or scratch. Choose method that is less jarring, causes least flicker.
+*** Support emacs recentf
+
+** Add support for switching existing X11 windows
+
+** Add support for cloning tab from web browser
+
+** Add support for config file
+Patterns to select and deselect names.
+Mechanism to select name sources, and for each source how it should be handled.
+Possibility to select config file to use. Or use config sections similar to polybar config?
+This program should implement mechanisms, and let users decide which mechanisms to use:
+- e.g. should a window/tab be moved or duplicated?
+Important that resulting i3 commands require little cognitive load.
+Important that config file is easy to understand.
+
+** Create README, documentation
+Again, look at other projects README and documentation, for good documentation practices and content.
+
+** Create examples
+
+** Create tests
+
+** What is an appropriate name for "i3-switch"?
+The current name is just a placeholder.
+Is there a convention for i3 support application names?
+Desirable that the name is likely to be found when people google for something similar.
+
+** How to announce?
+
+** Is there a good repo for i3 support applications?
+
+** Support for sway
+
+* Notes
+
+** emacs_buffers [--version|swap|add]
+Default is swap.
+
+** Manipulate browser
+brotab (bt) can list at least vivaldi tabs. No luck with my google-chrome, does it use a snap container?
+vivaldi --new-window URL
+will open URL in new window.
+bt close will close a tab.

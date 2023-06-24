@@ -3,7 +3,7 @@
 import configparser
 import os
 
-import i3_switch_window.__version__
+import i3_sway_switch_window.__version__
 
 parser = configparser.ConfigParser()
 
@@ -14,7 +14,7 @@ def _read_config_file(config_file_path):
     if len(config_file_path) > 0:
         file_path = config_file_path
     else:
-        config_path_suffix = os.path.join(i3_switch_window.__version__.__title__, 'config.ini')
+        config_path_suffix = os.path.join(i3_sway_switch_window.__version__.__title__, 'config.ini')
         possible_config_paths = []
         if 'APPDATA' in os.environ:
             path = os.path.join(os.environ['APPDATA'], config_path_suffix)
@@ -39,16 +39,16 @@ def _read_config_file(config_file_path):
                 break
 
     if len(file_path) == 0:
-        i3_switch_window.display_error_message._display_error_message('Config file ' + config_path_suffix + ' not found')
+        i3_sway_switch_window.display_error_message._display_error_message('Config file ' + config_path_suffix + ' not found')
         return False
     elif not os.path.exists(file_path):
-        i3_switch_window.display_error_message._display_error_message('Config file ' + file_path + ' not found')
+        i3_sway_switch_window.display_error_message._display_error_message('Config file ' + file_path + ' not found')
         return False
 
     return len(parser.read(file_path)) > 0
 
 def _get_value(section, key):
-    """Try to get a value from config file. If not found, the empty strin is returned.
+    """Try to get a value from config file. If not found, the empty string is returned.
     """
     if parser.has_option(section, key):
         return parser[section][key]

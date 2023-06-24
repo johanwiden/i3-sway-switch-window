@@ -1,6 +1,6 @@
 #+title: Construction
 
-How I intend to construct i3-switch
+How I intend to construct i3-sway-switch-window
 
 * Best practices
 For each feature, research how other people have implemented something similar.

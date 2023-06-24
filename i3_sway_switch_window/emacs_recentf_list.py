@@ -5,7 +5,7 @@
 # Note to developer: All error messages are to be presented to the user in one (well known) place.
 
 import subprocess
-import i3_switch_window.display_error_message
+import i3_sway_switch_window.display_error_message
 
 def _emacs_recentf_list():
     """Return recentf (recently opened files) list from emacs.
@@ -19,15 +19,15 @@ def _emacs_recentf_list():
                                            capture_output=True, encoding="utf-8", check=True, timeout=5)
     except FileNotFoundError as exc:
         error_message = f"Process failed because the executable could not be found.\n{exc}"
-        i3_switch_window.display_error_message._display_error_message(error_message)
+        i3_sway_switch_window.display_error_message._display_error_message(error_message)
         return []
     except subprocess.CalledProcessError as exc:
         error_message = f"Process failed because did not return a successful return code: {exc.returncode}\n{exc}"
-        i3_switch_window.display_error_message._display_error_message(error_message)
+        i3_sway_switch_window.display_error_message._display_error_message(error_message)
         return []
     except subprocess.TimeoutExpired as exc:
         error_message = f"Process timed out.\n{exc}"
-        i3_switch_window.display_error_message._display_error_message(error_message)
+        i3_sway_switch_window.display_error_message._display_error_message(error_message)
         return []
 
     # print(subprocess_result.stdout)

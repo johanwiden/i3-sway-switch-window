@@ -16,16 +16,6 @@ Emacs buffer and file from emacs recentf are displayed with emacsclient. Current
 
 </div>
 
-5. Upload initial code to GitHub:
-
-```bash
-git add .
-git commit -m ":tada: Initial commit"
-git branch -M main
-git remote add origin https://github.com/johanwiden/i3-sway-switch-window.git
-git push -u origin main
-```
-
 ## Installation
 
 ```bash
@@ -40,6 +30,7 @@ Then you can run
 browser_tab -h
 emacs_buffers -h
 emacs_recentf -h
+wm_window_switch -h
 ```
 
 To uninstall the package run:
@@ -72,7 +63,7 @@ roficommand = /usr/local/bin/rofi -dmenu
 webbrowser = google-chrome
 
 [workspace]
-# i3 workspace to which focused window will be swapped
+# i3, or sway, workspace to which focused window will be swapped
 # Default is "2"
 swap_workspace = 9
 ```

@@ -20,7 +20,12 @@ import i3_sway_switch_window.__version__
 
 # Possible to change in config file
 roficommand = 'rofi -dmenu'
+
 webbrowser = 'vivaldi' # Default value
+webbrowser_commandlineoptions = '--new-window'
+webbrowser_urlprefix = ''
+webbrowser_urlsuffix = ''
+
 swap_workspace = '2'
 
 def _select_item_and_switch(add_or_swap_window, focused_window_id, window_name_list):
@@ -168,11 +173,16 @@ def switch_in_browser_tab(add_or_swap_window):
             The currently focused window is moved to a different workspace.
     """
     tab_list = i3_sway_switch_window.browser_tab_list._browser_tab_list()
-    command_prefix = webbrowser + " --new-window "
-    command_suffix = "\n"
-    _select_item_execute_and_switch(add_or_swap_window, tab_list,
-                                    command_prefix, command_suffix,
-                                    r'.*h(ttps://\S+)\s*$', r"'h\1'")
+    command_prefix = webbrowser + " " + webbrowser_commandlineoptions + " " + webbrowser_urlprefix
+    command_suffix = webbrowser_urlsuffix + "\n"
+    if len(webbrowser_urlprefix) > 0 and webbrowser_urlprefix[-1] == '"':
+        _select_item_execute_and_switch(add_or_swap_window, tab_list,
+                                        command_prefix, command_suffix,
+                                        r'.*h(ttps://\S+)\s*$', r"h\1")
+    else:
+        _select_item_execute_and_switch(add_or_swap_window, tab_list,
+                                        command_prefix, command_suffix,
+                                        r'.*h(ttps://\S+)\s*$', r"'h\1'")
 
 def switch_in_wm_window(add_or_swap_window):
     """Use rofi to select a top level wm window (container) from a list. Move window to/near focused window.
@@ -213,9 +223,15 @@ def _parse_command_line_and_read_config():
         exit(1)
     config_roficommand = i3_sway_switch_window.config._get_value('roficommand', 'roficommand')
     config_webbrowser = i3_sway_switch_window.config._get_value('webbrowser', 'webbrowser')
+    config_webbrowser_commandlineoptions = i3_sway_switch_window.config._get_value('webbrowser', 'commandlineoptions')
+    config_webbrowser_urlprefix = i3_sway_switch_window.config._get_value('webbrowser', 'urlprefix')
+    config_webbrowser_urlsuffix = i3_sway_switch_window.config._get_value('webbrowser', 'urlsuffix')
     config_swap_workspace = i3_sway_switch_window.config._get_value('workspace', 'swap_workspace')
     global roficommand
     global webbrowser
+    global webbrowser_commandlineoptions
+    global webbrowser_urlprefix
+    global webbrowser_urlsuffix
     global swap_workspace
     if len(config_roficommand) > 0:
         roficommand = config_roficommand
@@ -223,6 +239,12 @@ def _parse_command_line_and_read_config():
         webbrowser = args.browser
     elif len(config_webbrowser) > 0:
         webbrowser = config_webbrowser
+    if len(config_webbrowser_commandlineoptions) > 0:
+        webbrowser_commandlineoptions = config_webbrowser_commandlineoptions
+    if len(config_webbrowser_urlprefix) > 0:
+        webbrowser_urlprefix = config_webbrowser_urlprefix
+    if len(config_webbrowser_urlsuffix) > 0:
+        webbrowser_urlsuffix = config_webbrowser_urlsuffix
     if len(config_swap_workspace) > 0:
         swap_workspace = config_swap_workspace
     return args.action

@@ -61,6 +61,24 @@ roficommand = /usr/local/bin/rofi -dmenu
 [webbrowser]
 # Default is "vivaldi"
 webbrowser = google-chrome
+# commandlineoptions is default --new-window
+# urlprefix is default empty
+# urlsuffix is default empty
+
+# Config for using nyxt browser:
+# webbrowser = nyxt
+# commandlineoptions = -r -q -e
+# urlprefix = '(make-window (make-buffer :url "
+# urlsuffix = "))'
+#
+# Besides this the following is needed in nyxt config
+# (define-configuration browser
+#   (
+#    ;; Whether code sent to the socket gets executed.  You must understand the
+#    ;; risks before enabling this: a privileged user with access to your system
+#    ;; can then take control of the browser and execute arbitrary code under your
+#    ;; user profile.
+#    (remote-execution-p t)))
 
 [workspace]
 # i3, or sway, workspace to which focused window will be swapped

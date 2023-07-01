@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 [project]
 name = "i3_sway_switch_window"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   { name="Johan Widén", email="j.e.widen@gmail.com" },
 ]

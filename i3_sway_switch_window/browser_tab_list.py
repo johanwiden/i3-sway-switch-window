@@ -39,6 +39,8 @@ def _browser_tab_list(get_urls_from_nyxt):
         all_tabs = [re.sub(r'^\S+\s', '', token) for token in all_tabs] # Remove tab ID column
         # Filter out internal URIs
         web_tabs = [token for token in all_tabs if 'https://' in token]
+        # Standardise number of spaces before https://
+        web_tabs = [re.sub(r'\s+https://', r'  https://', token) for token in web_tabs]
         if get_urls_from_nyxt:
             web_tabs = web_tabs + i3_sway_switch_window.get_nyxt_title_url._get_nyxt_title_url()
         # Make a sorted list, without duplicates

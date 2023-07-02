@@ -135,7 +135,7 @@ The check for a running nyxt is done using python package psutil.
 
 emacs currently uses a modified version of https://github.com/ag91/emacs-with-nyxt to communicate with nyxt,
 as the version in the ag91 repo seems to be for an older version of nyxt (the elisp file is dated 230327).
-You can find the modified version of 'emacs-with-nyxt.el' here: [emacs-with-nyxt.el](https://github.com/johanwiden/i3-sway-switch-window/elisp/emacs-with-nyxt.el) 
+You can find the modified version of 'emacs-with-nyxt.el' here: [emacs-with-nyxt.el](https://github.com/johanwiden/i3-sway-switch-window/blob/main/elisp/emacs-with-nyxt.el) 
 A few functions have been commented out, and the require for 'sly' has been uncommented.
 
 In my emacs config I have the following code to load 'emacs-with-nyxt.el':

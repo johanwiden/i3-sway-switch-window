@@ -78,6 +78,7 @@ def _get_nyxt_title_url():
         title_list = []
         for item in title_url_list:
             title = re.sub(r'^....(.+)\\"\\n\s+#<QURI.*$', r'\1', item)
+            title = re.sub(r'\\\\\\"', r'"', title)
             url = re.sub(r'^.*:URI-HTTPS (.*)>$', r'\1', item)
             title_list.append(title + '  ' + url)
 

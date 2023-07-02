@@ -8,32 +8,42 @@
 
 import re
 import subprocess
+import i3_sway_switch_window.get_nyxt_title_url
 import i3_sway_switch_window.display_error_message
 
-def _browser_tab_list():
+def _browser_tab_list(get_urls_from_nyxt):
     """Return list of web browser tab titles and URLs.
 
+    If get_urls_from_nyxt is True then also try to get titles and URLs from nyxt browser.
     The first column (tab ID), of each list item, is removed. The list is sorted case insensitive.
     """
+    success = 1
     try:
         subprocess_result = subprocess.run(['bt','list'],
                                            capture_output=True, encoding="utf-8", check=True, timeout=5)
     except FileNotFoundError as exc:
+        success = 0
         error_message = f"Process failed because the executable could not be found.\n{exc}"
         i3_sway_switch_window.display_error_message._display_error_message(error_message)
-        return [[],[],[]]
     except subprocess.CalledProcessError as exc:
+        success = 0
         error_message = f"Process failed because did not return a successful return code: {exc.returncode}\n{exc}"
         i3_sway_switch_window.display_error_message._display_error_message(error_message)
-        return [[],[],[]]
     except subprocess.TimeoutExpired as exc:
+        success = 0
         error_message = f"Process timed out.\n{exc}"
         i3_sway_switch_window.display_error_message._display_error_message(error_message)
-        return [[],[],[]]
 
-    # print(subprocess_result.stdout)
-    all_tabs = list(subprocess_result.stdout.split("\n"))
-    all_tabs = [re.sub(r'^\S+\s', '', token) for token in all_tabs] # Remove tab ID column
-    web_tabs = [token for token in all_tabs if 'https://' in token]
-    web_tabs.sort(key=str.casefold)
-    return web_tabs
+    if success:
+        all_tabs = list(subprocess_result.stdout.split("\n"))
+        all_tabs = [re.sub(r'^\S+\s', '', token) for token in all_tabs] # Remove tab ID column
+        # Filter out internal URIs
+        web_tabs = [token for token in all_tabs if 'https://' in token]
+        if get_urls_from_nyxt:
+            web_tabs = web_tabs + i3_sway_switch_window.get_nyxt_title_url._get_nyxt_title_url()
+        # Make a sorted list, without duplicates
+        set_res = set(web_tabs)
+        web_tabs = sorted(list(set_res), key=str.casefold)
+        return web_tabs
+    else:
+        return []

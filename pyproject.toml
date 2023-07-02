@@ -10,7 +10,7 @@ authors = [
 description = "In i3wm, or sway, replace current window with emacs buffer, browser tab or other window"
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["i3ipc"]
+dependencies = ["i3ipc", "psutil"]
 classifiers = [
     # complete classifier list:
     # http://pypi.python.org/pypi?%3Aaction=list_classifiers

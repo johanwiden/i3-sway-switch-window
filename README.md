@@ -49,6 +49,10 @@ Note that the brotab command line application 'bt', is currently unable to commu
 On Ubuntu I have had success with the vivaldi browser. It is still possible to open the URLs with for example chrome.
 Note 2023-06-22: bt now works also with chrome on Ubuntu.
 
+The browser_tab command can be configured to display in for example chrome and vivaldi. It can also be configured to display in the nyxt browser, see the details in the config example below.
+
+Beside getting info from brotab, browser_tab can be configured to also get info from the nyxt browser, but that requires some extra configuration. See below.
+
 The i3-sway-switch-window applications expect to find a configuration file in "i3_sway_switch_window/config.ini" in your config directory.
 The file can be empty.
 
@@ -65,7 +69,7 @@ webbrowser = google-chrome
 # urlprefix is default empty
 # urlsuffix is default empty
 
-# Config for using nyxt browser:
+# Config for displaying in the nyxt browser:
 # webbrowser = nyxt
 # commandlineoptions = -r -q -e
 # urlprefix = '(make-window (make-buffer :url "
@@ -79,6 +83,11 @@ webbrowser = google-chrome
 #    ;; can then take control of the browser and execute arbitrary code under your
 #    ;; user profile.
 #    (remote-execution-p t)))
+
+# Should we try to get a list of titles and URLs from nyxt webbrowser.
+# There are some requirements: See the project README.
+# default is no
+get_urls_from_nyxt = yes
 
 [workspace]
 # i3, or sway, workspace to which focused window will be swapped
@@ -117,8 +126,35 @@ bindsym $mod+Shift+r exec ~/.local/bin/emacs_recentf add
 
 Note for sway: An alternative to wm_window_switch is to use swayr command 'swap-focused-with', see https://sr.ht/~tsdh/swayr
 
-## Developer info
+### Requirements to get info from the nyxt browser
+i3-sway-switch-window currently uses emacsclient and emacs server to communicate with nyxt.
+This is a stopgap measure until a simpler means of getting info from nyxt, has been implemented.
 
+browser_tab will attempt to get info from nyxt, only if nyxt is running.
+The check for a running nyxt is done using python package psutil.
+
+emacs currently uses a modified version of https://github.com/ag91/emacs-with-nyxt to communicate with nyxt,
+as the version in the ag91 repo seems to be for an older version of nyxt (the elisp file is dated 230327).
+You can find the modified version of 'emacs-with-nyxt.el' here: [emacs-with-nyxt.el](https://github.com/johanwiden/i3-sway-switch-window/elisp/emacs-with-nyxt.el) 
+A few functions have been commented out, and the require for 'sly' has been uncommented.
+
+In my emacs config I have the following code to load 'emacs-with-nyxt.el':
+```bash
+(defun load-emacs-with-nyxt ()
+  (interactive)
+  (load "/home/someuser/.config/doom/emacs-with-nyxt.el"))
+```
+
+You need to add this (with the correct file path), to your emacs config, if you do not load 'emacs-with-nyxt.el' at start of emacs.
+
+Nyxt must also be configured to start a 'slynk' server. To do this add the line:
+```bash
+(start-slynk)
+```
+
+to your nyxt config.
+
+## Developer info
 To build the package:
 - Download the repo. E.g. git clone https://github.com/johanwiden/i3-sway-switch-window.git
 - Create a virtual environment, for development. E.g. with conda
@@ -126,6 +162,8 @@ To build the package:
   - conda activate i3env
   - conda install -c anaconda pip
   - pip install i3ipc
+    This is a package dependency
+  - pip install psutil
     This is a package dependency
   - pip install build
     This is the tool to build the package.

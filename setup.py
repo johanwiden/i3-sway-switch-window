@@ -41,7 +41,7 @@ setuptools.setup(
     license='MIT License',
     packages=setuptools.find_packages(),
     # packages=['i3-switch-window'],
-    install_requires=['i3ipc','stat','subprocess','tempfile'],
+    install_requires=['i3ipc','psutil','stat','subprocess','tempfile'],
     entry_points = {
         'console_scripts': [
             'emacs_buffers = i3_sway_switch_window.main:cli_emacs_buffers',

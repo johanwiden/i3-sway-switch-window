@@ -88,6 +88,15 @@ webbrowser = google-chrome
 # default is no
 get_urls_from_nyxt = yes
 
+# Config for displaying in qutebrowser:
+# webbrowser = qutebrowser
+# commandlineoptions = --target window
+
+# Should we try to get a list of titles and URLs from qutebrowser.
+# There are some requirements: See the project README.
+# default is no
+get_urls_from_qutebrowser = yes
+
 [workspace]
 # i3, or sway, workspace to which focused window will be swapped
 # Default is "2"
@@ -163,6 +172,8 @@ To build the package:
   - pip install i3ipc
     This is a package dependency
   - pip install psutil
+    This is a package dependency
+  - pip install pyyaml
     This is a package dependency
   - pip install build
     This is the tool to build the package.

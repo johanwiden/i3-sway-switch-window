@@ -26,6 +26,7 @@ webbrowser_commandlineoptions = '--new-window'
 webbrowser_urlprefix = ''
 webbrowser_urlsuffix = ''
 get_urls_from_nyxt = False
+get_urls_from_qutebrowser = False
 
 swap_workspace = '2'
 
@@ -173,7 +174,7 @@ def switch_in_browser_tab(add_or_swap_window):
     - swap: The window is displayed instead of the currently focused window.
             The currently focused window is moved to a different workspace.
     """
-    tab_list = i3_sway_switch_window.browser_tab_list._browser_tab_list(get_urls_from_nyxt)
+    tab_list = i3_sway_switch_window.browser_tab_list._browser_tab_list(get_urls_from_nyxt, get_urls_from_qutebrowser)
     command_prefix = webbrowser + " " + webbrowser_commandlineoptions + " " + webbrowser_urlprefix
     command_suffix = webbrowser_urlsuffix + "\n"
     if len(webbrowser_urlprefix) > 0 and webbrowser_urlprefix[-1] == '"':
@@ -228,6 +229,7 @@ def _parse_command_line_and_read_config():
     config_webbrowser_urlprefix = i3_sway_switch_window.config._get_value('webbrowser', 'urlprefix')
     config_webbrowser_urlsuffix = i3_sway_switch_window.config._get_value('webbrowser', 'urlsuffix')
     config_webbrowser_get_urls_from_nyxt = i3_sway_switch_window.config._get_value('webbrowser', 'get_urls_from_nyxt')
+    config_webbrowser_get_urls_from_qutebrowser = i3_sway_switch_window.config._get_value('webbrowser', 'get_urls_from_qutebrowser')
     config_swap_workspace = i3_sway_switch_window.config._get_value('workspace', 'swap_workspace')
     global roficommand
     global webbrowser
@@ -235,6 +237,7 @@ def _parse_command_line_and_read_config():
     global webbrowser_urlprefix
     global webbrowser_urlsuffix
     global get_urls_from_nyxt
+    global get_urls_from_qutebrowser
     global swap_workspace
     if len(config_roficommand) > 0:
         roficommand = config_roficommand
@@ -250,6 +253,8 @@ def _parse_command_line_and_read_config():
         webbrowser_urlsuffix = config_webbrowser_urlsuffix
     if len(config_webbrowser_get_urls_from_nyxt) > 0 and config_webbrowser_get_urls_from_nyxt == 'yes':
         get_urls_from_nyxt = True
+    if len(config_webbrowser_get_urls_from_qutebrowser) > 0 and config_webbrowser_get_urls_from_qutebrowser == 'yes':
+        get_urls_from_qutebrowser = True
     if len(config_swap_workspace) > 0:
         swap_workspace = config_swap_workspace
     return args.action

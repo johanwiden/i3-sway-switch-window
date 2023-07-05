@@ -9,12 +9,14 @@
 import re
 import subprocess
 import i3_sway_switch_window.get_nyxt_title_url
+import i3_sway_switch_window.get_qutebrowser_title_url
 import i3_sway_switch_window.display_error_message
 
-def _browser_tab_list(get_urls_from_nyxt):
+def _browser_tab_list(get_urls_from_nyxt, get_urls_from_qutebrowser):
     """Return list of web browser tab titles and URLs.
 
     If get_urls_from_nyxt is True then also try to get titles and URLs from nyxt browser.
+    If get_urls_from_qutebrowser is True then also try to get titles and URLs from qutebrowser.
     The first column (tab ID), of each list item, is removed. The list is sorted case insensitive.
     """
     success = 1
@@ -43,6 +45,8 @@ def _browser_tab_list(get_urls_from_nyxt):
         web_tabs = [re.sub(r'\s+https://', r'  https://', token) for token in web_tabs]
         if get_urls_from_nyxt:
             web_tabs = web_tabs + i3_sway_switch_window.get_nyxt_title_url._get_nyxt_title_url()
+        if get_urls_from_qutebrowser:
+            web_tabs = web_tabs + i3_sway_switch_window.get_qutebrowser_title_url._get_qutebrowser_title_url()
         # Make a sorted list, without duplicates
         set_res = set(web_tabs)
         web_tabs = sorted(list(set_res), key=str.casefold)
